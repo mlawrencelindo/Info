@@ -50,16 +50,28 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [minLoadComplete, setMinLoadComplete] = useState(false);
 
   // Lock scroll when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
       setIsLoading(true); // Reset loading state when opening
+      setMinLoadComplete(false);
+      
+      // Ensure the loader stays for at least 2 seconds for a smoother feel
+      const timer = setTimeout(() => {
+        setMinLoadComplete(true);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
     } else {
       document.body.style.overflow = 'unset';
     }
   }, [isModalOpen]);
+
+  // Combined loading state
+  const showIframe = !isLoading && minLoadComplete;
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -198,23 +210,42 @@ function App() {
               </div>
 
               {/* Iframe Content */}
-              <div className="flex-1 w-full relative bg-white overflow-hidden hide-scrollbar">
-                {isLoading && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#fcfcfc]">
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex flex-col items-center gap-4"
-                    >
-                      <Loader2 size={24} className="text-black/20 animate-spin" />
-                      <span className="text-[9px] uppercase tracking-[0.4em] font-black text-black/20 italic">Initializing experience</span>
-                    </motion.div>
+              <div className="flex-1 w-full relative bg-[#050505] overflow-hidden hide-scrollbar">
+                {!showIframe && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050505]">
+                    <div className="relative w-32 h-32">
+                      {/* Central Square */}
+                      <motion.div 
+                        animate={{ rotate: 45, scale: [0.8, 1, 0.8] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute inset-0 m-auto w-10 h-10 border-2 border-white"
+                      />
+                      {/* Outer Rotating Square */}
+                      <motion.div 
+                        animate={{ rotate: -45, scale: [1, 1.2, 1] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute inset-0 m-auto w-16 h-16 border border-white/10"
+                      />
+                      {/* Spinning Dashed Ring */}
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0 border-[3px] border-dotted border-white/5 rounded-full"
+                      />
+                      {/* Pulse Ring */}
+                      <motion.div 
+                        animate={{ scale: [0.5, 1.5], opacity: [0.4, 0] }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                        className="absolute inset-0 border border-white/20 rounded-full"
+                      />
+                    </div>
                   </div>
                 )}
                 <iframe
                   src={bookingLink}
                   onLoad={() => setIsLoading(false)}
-                  className={`w-full h-[calc(100%+120px)] border-none hide-scrollbar absolute -top-[30px] left-0 transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                  className={`w-full h-[calc(100%+120px)] border-none hide-scrollbar absolute -top-[30px] left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
+                  style={{ background: '#050505' }}
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
