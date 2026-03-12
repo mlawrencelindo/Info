@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #fdfaf6;
-  --color-text: #1a1a1a;
-  --color-accent: #c5a059;
+  --color-bg: #f9f9f9;
+  --color-text: #121212;
+  --color-secondary: #666666;
+  --color-border: rgba(0, 0, 0, 0.06);
 }
 
 body {
@@ -13,8 +14,15 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', serif;
+  font-weight: 400;
+}
+
+::selection {
+  background: #121212;
+  color: #ffffff;
 }
