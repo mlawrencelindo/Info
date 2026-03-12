@@ -133,7 +133,7 @@ function App() {
             
             <motion.h1 
               variants={fadeUp} 
-              className="text-[clamp(3rem,9vw,7rem)] leading-none tracking-[-0.06em] mb-12 font-black uppercase"
+              className="text-[clamp(3rem,9vw,7rem)] leading-none tracking-[0.1em] mb-12 font-black uppercase"
             >
               {name}
             </motion.h1>
