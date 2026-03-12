@@ -126,15 +126,11 @@ function App() {
           <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden p-10 md:p-12 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
             
-            <motion.div 
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 1 }}
-              className="mb-6 p-5 bg-white/[0.05] rounded-2xl border border-white/10 group-hover:border-white/20 transition-colors"
-            >
+            <div className="mb-6 p-5 bg-white/[0.05] rounded-2xl border border-white/10 transition-colors">
               <Calendar size={28} strokeWidth={1.5} className="text-white" />
-            </motion.div>
+            </div>
             
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-5 leading-tight text-center">
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-5 leading-tight text-center whitespace-nowrap">
               Work <span className="text-white/10 group-hover:text-white/20 transition-colors">Together.</span>
             </h2>
             
@@ -152,10 +148,6 @@ function App() {
             >
               Schedule <ArrowUpRight size={16} />
             </motion.a>
-
-            <div className="absolute bottom-[-5%] right-[-5%] text-[8rem] font-black text-white/[0.01] pointer-events-none select-none uppercase tracking-tighter group-hover:text-white/[0.02] transition-all duration-1000">
-              Meet
-            </div>
           </div>
         </motion.div>
       </main>
