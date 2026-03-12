@@ -215,7 +215,12 @@ function App() {
         }}
       />
       
-      <main className="relative z-10 w-full max-w-screen-xl mx-auto px-8 md:px-16 py-16 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-20 items-center">
+      <motion.main 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full max-w-screen-xl mx-auto px-8 md:px-16 py-16 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-20 items-center"
+      >
         <motion.div
           initial="hidden"
           animate="show"
@@ -258,7 +263,7 @@ function App() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="relative pt-4"
         >
           <div className="absolute top-0 left-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
@@ -282,7 +287,7 @@ function App() {
             </motion.button>
           </div>
         </motion.div>
-      </main>
+      </motion.main>
 
       <AnimatePresence>
         {isModalOpen && (
