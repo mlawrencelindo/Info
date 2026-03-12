@@ -41,7 +41,7 @@ const IconLink = ({ href, icon: Icon, label }) => (
 
 function App() {
   const name = "Mark Lindo";
-  const bio = "Building the future of resilient architecture. I'm always open to new ideas—let's connect and create something exceptional together.";
+  const bio = "Architecting resilient systems. Let's build something exceptional together.";
   const email = "mlawrencelindo@gmail.com";
   const linkedin = "https://www.linkedin.com/in/mlawrencelindo/";
   const github = "https://github.com/mlawrencelindo";
@@ -73,17 +73,16 @@ function App() {
         }}
       />
       
-      <main className="relative z-10 w-full max-w-screen-2xl mx-auto px-8 md:px-24 py-24 grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-12 items-center">
+      <main className="relative z-10 w-full max-w-screen-2xl mx-auto px-8 md:px-24 py-24 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-24 items-center">
         
         {/* Left Side: Content */}
         <motion.div
           initial="hidden"
           animate="show"
           variants={stagger}
-          className="flex flex-col items-start text-left space-y-12"
+          className="flex flex-col items-start text-left space-y-10"
         >
-          <motion.div variants={fadeUp} className="flex items-center gap-4">
-            <span className="w-12 h-px bg-white/10"></span>
+          <motion.div variants={fadeUp}>
             <span className="text-[11px] uppercase tracking-[0.6em] text-white/30 font-black">
               Systems Engineer
             </span>
@@ -100,12 +99,7 @@ function App() {
             variants={fadeUp}
             className="text-lg md:text-xl font-medium leading-relaxed text-white/40 max-w-xl uppercase tracking-[0.1em]"
           >
-            {bio.split('—').map((part, i) => (
-              <React.Fragment key={i}>
-                {i > 0 && <br className="hidden md:block" />}
-                {i > 0 ? `— ${part}` : part}
-              </React.Fragment>
-            ))}
+            {bio}
           </motion.p>
 
           <motion.div 
@@ -119,9 +113,12 @@ function App() {
           </motion.div>
         </motion.div>
 
+        {/* Minimal Divider */}
+        <div className="hidden lg:block w-px h-64 bg-white/5 self-center"></div>
+
         {/* Right Side: Booking */}
         <motion.div
-          initial={{ opacity: 0, x: 40 }}
+          initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
@@ -160,14 +157,11 @@ function App() {
               Meet
             </div>
           </div>
-
-          {/* Decorative elements behind the card */}
-          <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-white/[0.01] rounded-full blur-[100px] pointer-events-none" />
         </motion.div>
       </main>
       
-      {/* Footer (Floating/Minimal) */}
-      <footer className="fixed bottom-12 left-12 md:left-24 z-20">
+      {/* Footer (Centered) */}
+      <footer className="fixed bottom-12 left-0 w-full flex justify-center z-20 pointer-events-none">
         <span className="text-[9px] uppercase tracking-[0.6em] font-black text-white/20 italic">
           © 2026 Mark Lindo — Manila, PH
         </span>
