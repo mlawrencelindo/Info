@@ -142,7 +142,7 @@ function App() {
               variants={fadeUp}
               className="text-lg md:text-xl font-medium leading-relaxed text-white/40 max-w-2xl mb-20 uppercase tracking-[0.1em]"
             >
-              Architecting high-performance <span className="text-white">resilient systems</span> <br className="hidden md:block" /> with focus on scalability and precision.
+              Building the future of <span className="text-white">resilient architecture</span>. <br className="hidden md:block" /> I'm always open to new ideas—let's connect and create something exceptional together.
             </motion.p>
 
             {/* Interactive Icon Row */}
