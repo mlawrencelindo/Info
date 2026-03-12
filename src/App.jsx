@@ -40,7 +40,7 @@ const IconLink = ({ href, icon: Icon, label }) => (
 );
 
 function App() {
-  const name = "Mark Lawrence Lindo";
+  const name = "Mark Lindo";
   const bio = "System Engineer";
   const email = "mlawrencelindo@gmail.com";
   const linkedin = "https://www.linkedin.com/in/mlawrencelindo/";
@@ -99,7 +99,7 @@ function App() {
           animate={{ opacity: 1, x: 0 }}
           className="text-[11px] uppercase tracking-[0.4em] font-black pointer-events-auto bg-white/5 backdrop-blur-xl px-6 py-3 rounded-full border border-white/10 shadow-2xl"
         >
-          M.L. Lindo
+          M. Lindo
         </motion.span>
         <motion.a 
           initial={{ opacity: 0, x: 20 }}
