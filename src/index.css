@@ -29,20 +29,23 @@ h1, h2, h3, h4, h5, h6 {
   color: #000000;
 }
 
-/* Custom scrollbar for dark theme */
-::-webkit-scrollbar {
-  width: 6px;
+/* Hide scrollbars globally */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
 }
 
-::-webkit-scrollbar-track {
-  background: #050505;
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari and Opera */
+  width: 0 !important;
+  height: 0 !important;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #222;
-  border-radius: 10px;
+.hide-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #333;
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
 }

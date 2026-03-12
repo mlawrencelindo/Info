@@ -50,6 +50,15 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isModalOpen]);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 100, damping: 30 });
@@ -159,53 +168,54 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 bg-black/95 backdrop-blur-md"
             onClick={() => setIsModalOpen(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 0.98, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-5xl h-full max-h-[85vh] bg-white rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col"
+              exit={{ scale: 0.98, opacity: 0, y: 10 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-5xl h-full max-h-[85vh] bg-[#ffffff] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="p-6 flex justify-between items-center border-b border-black/5">
+              <div className="p-5 flex justify-between items-center bg-white border-b border-black/5 z-20">
                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                   <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
                       <Calendar size={14} className="text-white" />
                    </div>
                    <span className="text-[10px] uppercase tracking-[0.3em] font-black text-black">Booking — Notion Calendar</span>
                 </div>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-3 hover:bg-black/5 rounded-full transition-colors group"
+                  className="p-2 hover:bg-black/5 rounded-full transition-colors group"
                 >
                   <X size={20} className="text-black transition-transform group-hover:rotate-90 duration-300" />
                 </button>
               </div>
 
               {/* Iframe Content */}
-              <div className="flex-1 w-full relative bg-[#fcfcfc]">
+              <div className="flex-1 w-full relative bg-white overflow-hidden hide-scrollbar -mt-1">
                 <iframe
                   src={bookingLink}
-                  className="w-full h-full border-none"
+                  className="w-full h-full border-none hide-scrollbar absolute inset-0"
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
                 
-                {/* Fallback Overlay (In case Notion blocks iframes) */}
-                <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-12 text-center opacity-0 hover:opacity-100 transition-opacity bg-white/80 backdrop-blur-sm z-0">
-                   <p className="text-black/40 text-sm font-medium uppercase tracking-widest mb-6 max-w-xs">
-                     If the calendar doesn't appear, please use the direct link below.
+                {/* Fallback Overlay */}
+                <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-12 text-center opacity-0 hover:opacity-100 transition-opacity bg-white/95 z-0">
+                   <p className="text-black/40 text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
+                     If the calendar doesn't appear, please use the direct link.
                    </p>
                    <a 
                     href={bookingLink} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-black font-black uppercase tracking-[0.3em] text-[10px] border-b-2 border-black pb-1 hover:text-black/60 hover:border-black/20 transition-all pointer-events-auto"
+                    className="bg-black text-white px-8 py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-black/80 transition-all pointer-events-auto"
                    >
-                     Direct Link <ArrowUpRight size={14} className="inline ml-1" />
+                     Direct Link <ArrowUpRight size={14} className="inline ml-2" />
                    </a>
                 </div>
               </div>
