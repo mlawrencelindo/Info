@@ -72,9 +72,8 @@ function App() {
               <span className="w-8 h-[2px] bg-black/10"></span>
             </motion.div>
             
-            <motion.h1 variants={fadeUp} className="text-[clamp(3.5rem,10vw,7.5rem)] leading-[0.95] tracking-[-0.05em] mb-12 font-extrabold uppercase">
-              {name.split(' ')[0]}<br />
-              <span className="text-black/20">{name.split(' ').slice(1).join(' ')}</span>
+            <motion.h1 variants={fadeUp} className="text-[clamp(2.5rem,8vw,6.5rem)] leading-none tracking-[-0.05em] mb-12 font-extrabold uppercase whitespace-nowrap">
+              {name}
             </motion.h1>
 
             <motion.p 
