@@ -39,6 +39,110 @@ const IconLink = ({ href, icon: Icon, label }) => (
   </motion.a>
 );
 
+const InteractiveBackground = () => {
+  const canvasRef = useRef(null);
+  const mouse = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let particles = [];
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      init();
+    };
+
+    const handleMouseMove = (e) => {
+      mouse.current = { x: e.clientX, y: e.clientY };
+    };
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.2;
+        this.vy = (Math.random() - 0.5) * 0.2;
+        this.radius = 1;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        const dx = mouse.current.x - this.x;
+        const dy = mouse.current.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 200) {
+          this.x -= dx * 0.005;
+          this.y -= dy * 0.005;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fill();
+      }
+    }
+
+    const init = () => {
+      particles = [];
+      const count = Math.floor((canvas.width * canvas.height) / 12000);
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+      }
+    };
+
+    const animate = () => {
+      ctx.fillStyle = '#050505';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      particles.forEach((p, i) => {
+        p.update();
+        p.draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 180) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - dist / 180)})`;
+            ctx.lineWidth = 0.6;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', handleMouseMove);
+    handleResize();
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
+};
+
 function App() {
   const name = "Mark Lindo";
   const bio = "Architecting resilient systems. Let's build something exceptional together.";
@@ -53,7 +157,6 @@ function App() {
   const [minLoadComplete, setMinLoadComplete] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
 
-  // Lock scroll when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -61,12 +164,10 @@ function App() {
       setMinLoadComplete(false);
       setShowFallback(false);
       
-      // Ensure the loader stays for at least 1.5 seconds for a smoother feel
       const minLoadTimer = setTimeout(() => {
         setMinLoadComplete(true);
       }, 1500);
 
-      // Show fallback only if still loading after 10 seconds
       const fallbackTimer = setTimeout(() => {
         setIsLoading(prevLoading => {
           if (prevLoading) setShowFallback(true);
@@ -88,7 +189,6 @@ function App() {
     setShowFallback(false);
   };
 
-  // Combined loading state
   const showIframe = !isLoading && minLoadComplete;
 
   const mouseX = useMotionValue(0);
@@ -107,18 +207,15 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black font-sans overflow-hidden flex items-center justify-center">
-      
-      {/* Interactive Background */}
+      <InteractiveBackground />
       <motion.div 
-        className="fixed inset-0 z-0 pointer-events-none"
+        className="fixed inset-0 z-[1] pointer-events-none"
         style={{
           background: `radial-gradient(circle 800px at ${springX}px ${springY}px, rgba(255,255,255,0.03), transparent)`
         }}
       />
       
       <main className="relative z-10 w-full max-w-screen-xl mx-auto px-8 md:px-16 py-16 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-20 items-center">
-        
-        {/* Left Side: Content */}
         <motion.div
           initial="hidden"
           animate="show"
@@ -156,31 +253,25 @@ function App() {
           </motion.div>
         </motion.div>
 
-        {/* Minimal Divider */}
         <div className="hidden lg:block w-px h-100 bg-white/5 self-center"></div>
 
-        {/* Right Side: Booking */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative pt-4"
         >
-          {/* Calendar Rings */}
           <div className="absolute top-0 left-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
           <div className="absolute top-0 right-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
 
           <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[3rem] overflow-hidden p-12 md:p-16 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-            
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6 leading-tight text-center whitespace-nowrap relative z-10">
               Work <span className="text-white/10">Together.</span>
             </h2>
-            
             <p className="text-white/30 text-xs font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
               Let's connect and build the next generation of digital architecture.
             </p>
-            
             <motion.button 
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
@@ -193,7 +284,6 @@ function App() {
         </motion.div>
       </main>
 
-      {/* Modern Booking Modal */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -211,7 +301,6 @@ function App() {
               className="relative w-full max-w-5xl h-full max-h-[85vh] bg-[#ffffff] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div className="p-6 flex justify-between items-center bg-white border-b border-black/5 z-20">
                 <div className="flex items-center gap-3">
                    <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
@@ -227,7 +316,6 @@ function App() {
                 </button>
               </div>
 
-              {/* Iframe Content */}
               <div className="flex-1 w-full relative bg-[#050505] overflow-hidden hide-scrollbar">
                 {!showIframe && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050505]">
@@ -264,7 +352,6 @@ function App() {
                   allow="payment"
                 />
 
-                {/* Smart Fallback Overlay */}
                 <AnimatePresence>
                   {showFallback && (
                     <motion.div 
@@ -292,14 +379,11 @@ function App() {
         )}
       </AnimatePresence>
       
-      {/* Footer (Centered) */}
       <footer className="fixed bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">
         <span className="text-[8px] uppercase tracking-[0.6em] font-black text-white/20 italic">
           © 2026 Mark Lindo — Manila, PH
         </span>
       </footer>
-
-      {/* Depth Grain */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
     </div>
   );
