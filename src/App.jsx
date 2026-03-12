@@ -90,14 +90,14 @@ function App() {
           
           <motion.h1 
             variants={fadeUp} 
-            className="text-[clamp(2.5rem,6vw,5rem)] leading-none tracking-[0.25em] font-black uppercase"
+            className="text-[clamp(2.5rem,6vw,5rem)] leading-none tracking-[0.5em] font-black uppercase mr-[-0.5em]"
           >
             {name}
           </motion.h1>
 
           <motion.p 
             variants={fadeUp}
-            className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
+            className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.2em]"
           >
             {bio}
           </motion.p>
@@ -130,8 +130,8 @@ function App() {
               <Calendar size={28} strokeWidth={1.5} className="text-white" />
             </div>
             
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-5 leading-tight text-center whitespace-nowrap">
-              Work <span className="text-white/10 group-hover:text-white/20 transition-colors">Together.</span>
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-widest mb-5 leading-tight text-center whitespace-nowrap">
+              Work <span className="text-white/10">Together.</span>
             </h2>
             
             <p className="text-white/30 text-xs font-medium mb-10 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center">
