@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { Github, Linkedin, Mail, MessageSquare, Calendar, ArrowUpRight, X, Loader2 } from 'lucide-react';
 
@@ -51,24 +51,42 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [minLoadComplete, setMinLoadComplete] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
 
   // Lock scroll when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
-      setIsLoading(true); // Reset loading state when opening
+      setIsLoading(true);
       setMinLoadComplete(false);
+      setShowFallback(false);
       
-      // Ensure the loader stays for at least 2 seconds for a smoother feel
-      const timer = setTimeout(() => {
+      // Ensure the loader stays for at least 1.5 seconds for a smoother feel
+      const minLoadTimer = setTimeout(() => {
         setMinLoadComplete(true);
       }, 1500);
+
+      // Show fallback only if still loading after 10 seconds
+      const fallbackTimer = setTimeout(() => {
+        setIsLoading(prevLoading => {
+          if (prevLoading) setShowFallback(true);
+          return prevLoading;
+        });
+      }, 10000);
       
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(minLoadTimer);
+        clearTimeout(fallbackTimer);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
   }, [isModalOpen]);
+
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+    setShowFallback(false);
+  };
 
   // Combined loading state
   const showIframe = !isLoading && minLoadComplete;
@@ -214,25 +232,21 @@ function App() {
                 {!showIframe && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050505]">
                     <div className="relative w-32 h-32">
-                      {/* Central Square */}
                       <motion.div 
                         animate={{ rotate: 45, scale: [0.8, 1, 0.8] }}
                         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute inset-0 m-auto w-10 h-10 border-2 border-white"
                       />
-                      {/* Outer Rotating Square */}
                       <motion.div 
                         animate={{ rotate: -45, scale: [1, 1.2, 1] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute inset-0 m-auto w-16 h-16 border border-white/10"
                       />
-                      {/* Spinning Dashed Ring */}
                       <motion.div 
                         animate={{ rotate: 360 }}
                         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                         className="absolute inset-0 border-[3px] border-dotted border-white/5 rounded-full"
                       />
-                      {/* Pulse Ring */}
                       <motion.div 
                         animate={{ scale: [0.5, 1.5], opacity: [0.4, 0] }}
                         transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
@@ -243,27 +257,35 @@ function App() {
                 )}
                 <iframe
                   src={bookingLink}
-                  onLoad={() => setIsLoading(false)}
+                  onLoad={handleIframeLoad}
                   className={`w-full h-[calc(100%+120px)] border-none hide-scrollbar absolute -top-[30px] left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
                   style={{ background: '#050505' }}
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
 
-                {/* Fallback Overlay */}
-                <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-12 text-center opacity-0 hover:opacity-100 transition-opacity bg-white/95 z-0">
-                   <p className="text-black/40 text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
-                     If the calendar doesn't appear, please use the direct link.
-                   </p>
-                   <a 
-                    href={bookingLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-black text-white px-8 py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-black/80 transition-all pointer-events-auto"
-                   >
-                     Direct Link <ArrowUpRight size={14} className="inline ml-2" />
-                   </a>
-                </div>
+                {/* Smart Fallback Overlay */}
+                <AnimatePresence>
+                  {showFallback && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-[#050505] z-30"
+                    >
+                       <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
+                         The calendar is taking longer than expected.
+                       </p>
+                       <a 
+                        href={bookingLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-white text-black px-8 py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white/80 transition-all"
+                       >
+                         Open Direct Link <ArrowUpRight size={14} className="inline ml-2" />
+                       </a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           </motion.div>
