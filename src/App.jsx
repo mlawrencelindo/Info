@@ -127,7 +127,7 @@ function App() {
         </motion.div>
 
         {/* Minimal Divider */}
-        <div className="hidden lg:block w-px h-48 bg-white/5 self-center"></div>
+        <div className="hidden lg:block w-px h-100 bg-white/5 self-center"></div>
 
         {/* Right Side: Booking */}
         <motion.div
@@ -214,7 +214,7 @@ function App() {
                 <iframe
                   src={bookingLink}
                   onLoad={() => setIsLoading(false)}
-                  className={`w-full h-[calc(100%+60px)] border-none hide-scrollbar absolute -top-[60px] left-0 transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                  className={`w-full h-[calc(100%+120px)] border-none hide-scrollbar absolute -top-[30px] left-0 transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
