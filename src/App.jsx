@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
-import { Github, Linkedin, Mail, MessageSquare, Calendar, ArrowUpRight, X } from 'lucide-react';
+import { Github, Linkedin, Mail, MessageSquare, Calendar, ArrowUpRight, X, Loader2 } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -49,11 +49,13 @@ function App() {
   const bookingLink = "https://calendar.notion.so/meet/marklawrenceperezlindo/jpd814oup";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Lock scroll when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
+      setIsLoading(true); // Reset loading state when opening
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -135,10 +137,10 @@ function App() {
           className="relative pt-4"
         >
           {/* Calendar Rings */}
-          <div className="absolute top-0 left-1/4 w-1.5 h-6 bg-white/10 rounded-full z-20"></div>
-          <div className="absolute top-0 right-1/4 w-1.5 h-6 bg-white/10 rounded-full z-20"></div>
+          <div className="absolute top-0 left-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
+          <div className="absolute top-0 right-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
 
-          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2rem] overflow-hidden p-12 md:p-16 flex flex-col items-center group shadow-2xl">
+          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[3rem] overflow-hidden p-12 md:p-16 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
             
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6 leading-tight text-center whitespace-nowrap relative z-10">
@@ -153,7 +155,7 @@ function App() {
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsModalOpen(true)}
-              className="bg-white text-black px-12 py-6 rounded-xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
+              className="bg-white text-black px-12 py-6 rounded-2xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
             >
               Schedule <ArrowUpRight size={16} />
             </motion.button>
@@ -176,11 +178,11 @@ function App() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.98, opacity: 0, y: 10 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-5xl h-full max-h-[85vh] bg-[#ffffff] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col ring-1 ring-white/10"
+              className="relative w-full max-w-5xl h-full max-h-[85vh] bg-[#ffffff] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="p-5 flex justify-between items-center bg-white border-b border-black/5 z-20">
+              <div className="p-6 flex justify-between items-center bg-white border-b border-black/5 z-20">
                 <div className="flex items-center gap-3">
                    <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
                       <Calendar size={14} className="text-white" />
@@ -195,12 +197,24 @@ function App() {
                 </button>
               </div>
 
-              {/* Iframe Content with Top and Bottom Cropping Workaround */}
+              {/* Iframe Content */}
               <div className="flex-1 w-full relative bg-white overflow-hidden hide-scrollbar">
+                {isLoading && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#fcfcfc]">
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex flex-col items-center gap-4"
+                    >
+                      <Loader2 size={24} className="text-black/20 animate-spin" />
+                      <span className="text-[9px] uppercase tracking-[0.4em] font-black text-black/20 italic">Initializing experience</span>
+                    </motion.div>
+                  </div>
+                )}
                 <iframe
                   src={bookingLink}
-                  className="w-full h-[calc(100%+17 0px)] border-none hide-scrollbar absolute -top-[60px] left-0"
-                  style={{ marginBottom: '-170px' }}
+                  onLoad={() => setIsLoading(false)}
+                  className={`w-full h-[calc(100%+60px)] border-none hide-scrollbar absolute -top-[60px] left-0 transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
