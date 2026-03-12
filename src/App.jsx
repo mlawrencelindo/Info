@@ -142,7 +142,7 @@ function App() {
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
             
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6 leading-tight text-center whitespace-nowrap relative z-10">
-              Work <span className="text-white/10 group-hover:text-white/20 transition-colors">Together.</span>
+              Work <span className="text-white/10">Together.</span>
             </h2>
             
             <p className="text-white/30 text-xs font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
@@ -195,15 +195,16 @@ function App() {
                 </button>
               </div>
 
-              {/* Iframe Content */}
-              <div className="flex-1 w-full relative bg-white overflow-hidden hide-scrollbar -mt-1">
+              {/* Iframe Content with Top and Bottom Cropping Workaround */}
+              <div className="flex-1 w-full relative bg-white overflow-hidden hide-scrollbar">
                 <iframe
                   src={bookingLink}
-                  className="w-full h-full border-none hide-scrollbar absolute inset-0"
+                  className="w-full h-[calc(100%+17 0px)] border-none hide-scrollbar absolute -top-[60px] left-0"
+                  style={{ marginBottom: '-170px' }}
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
-                
+
                 {/* Fallback Overlay */}
                 <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-12 text-center opacity-0 hover:opacity-100 transition-opacity bg-white/95 z-0">
                    <p className="text-black/40 text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
