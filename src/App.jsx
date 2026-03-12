@@ -3,12 +3,12 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { Github, Linkedin, Mail, MessageSquare, Calendar, ArrowUpRight } from 'lucide-react';
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   show: { 
     opacity: 1, 
     y: 0, 
     transition: { 
-      duration: 1.2, 
+      duration: 1, 
       ease: [0.16, 1, 0.3, 1] 
     } 
   }
@@ -17,7 +17,7 @@ const fadeUp = {
 const stagger = {
   show: {
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.08
     }
   }
 };
@@ -29,11 +29,11 @@ const IconLink = ({ href, icon: Icon, label }) => (
     target="_blank"
     rel="noopener noreferrer"
     aria-label={label}
-    className="group relative p-5 border border-white/5 hover:border-white/20 rounded-2xl bg-white/[0.03] backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 flex items-center justify-center overflow-hidden"
+    className="group relative p-4 border border-white/5 hover:border-white/20 rounded-xl bg-white/[0.03] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 flex items-center justify-center overflow-hidden"
   >
     <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    <Icon size={22} strokeWidth={1.5} className="text-white/40 group-hover:text-white transition-colors relative z-10" />
-    <span className="absolute -top-12 scale-0 group-hover:scale-100 transition-all text-[10px] uppercase tracking-[0.2em] font-black text-white bg-white/10 backdrop-blur-xl px-4 py-1.5 rounded-full border border-white/10 whitespace-nowrap pointer-events-none z-20">
+    <Icon size={20} strokeWidth={1.5} className="text-white/40 group-hover:text-white transition-colors relative z-10" />
+    <span className="absolute -top-10 scale-0 group-hover:scale-100 transition-all text-[9px] uppercase tracking-[0.2em] font-black text-white bg-white/10 backdrop-blur-xl px-3 py-1 rounded-full border border-white/10 whitespace-nowrap pointer-events-none z-20">
       {label}
     </span>
   </motion.a>
@@ -73,38 +73,38 @@ function App() {
         }}
       />
       
-      <main className="relative z-10 w-full max-w-screen-2xl mx-auto px-8 md:px-24 py-24 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-24 items-center">
+      <main className="relative z-10 w-full max-w-screen-xl mx-auto px-8 md:px-16 py-16 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-20 items-center">
         
         {/* Left Side: Content */}
         <motion.div
           initial="hidden"
           animate="show"
           variants={stagger}
-          className="flex flex-col items-start text-left space-y-10"
+          className="flex flex-col items-start text-left space-y-8"
         >
           <motion.div variants={fadeUp}>
-            <span className="text-[11px] uppercase tracking-[0.6em] text-white/30 font-black">
+            <span className="text-[10px] uppercase tracking-[0.6em] text-white/30 font-black">
               Systems Engineer
             </span>
           </motion.div>
           
           <motion.h1 
             variants={fadeUp} 
-            className="text-[clamp(3rem,8vw,6.5rem)] leading-none tracking-[0.25em] font-black uppercase"
+            className="text-[clamp(2.5rem,6vw,5rem)] leading-none tracking-[0.25em] font-black uppercase"
           >
             {name}
           </motion.h1>
 
           <motion.p 
             variants={fadeUp}
-            className="text-lg md:text-xl font-medium leading-relaxed text-white/40 max-w-xl uppercase tracking-[0.1em]"
+            className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
           >
             {bio}
           </motion.p>
 
           <motion.div 
             variants={stagger}
-            className="flex flex-wrap gap-4 pt-4"
+            className="flex flex-wrap gap-3 pt-2"
           >
             <IconLink href={`mailto:${email}`} icon={Mail} label="Email" />
             <IconLink href={linkedin} icon={Linkedin} label="LinkedIn" />
@@ -114,7 +114,7 @@ function App() {
         </motion.div>
 
         {/* Minimal Divider */}
-        <div className="hidden lg:block w-px h-64 bg-white/5 self-center"></div>
+        <div className="hidden lg:block w-px h-48 bg-white/5 self-center"></div>
 
         {/* Right Side: Booking */}
         <motion.div
@@ -123,22 +123,22 @@ function App() {
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
         >
-          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[3rem] overflow-hidden p-12 md:p-16 flex flex-col items-center group shadow-2xl">
+          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden p-10 md:p-12 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
             
             <motion.div 
               whileHover={{ rotate: 360 }}
               transition={{ duration: 1 }}
-              className="mb-8 p-6 bg-white/[0.05] rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors"
+              className="mb-6 p-5 bg-white/[0.05] rounded-2xl border border-white/10 group-hover:border-white/20 transition-colors"
             >
-              <Calendar size={32} strokeWidth={1.5} className="text-white" />
+              <Calendar size={28} strokeWidth={1.5} className="text-white" />
             </motion.div>
             
-            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 leading-tight text-center">
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-5 leading-tight text-center">
               Work <span className="text-white/10 group-hover:text-white/20 transition-colors">Together.</span>
             </h2>
             
-            <p className="text-white/30 text-sm font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center">
+            <p className="text-white/30 text-xs font-medium mb-10 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center">
               Let's connect and build the next generation of digital architecture.
             </p>
             
@@ -148,12 +148,12 @@ function App() {
               href={bookingLink}
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-white text-black px-12 py-6 rounded-2xl text-[11px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-4"
+              className="bg-white text-black px-10 py-5 rounded-xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3"
             >
-              Schedule <ArrowUpRight size={18} />
+              Schedule <ArrowUpRight size={16} />
             </motion.a>
 
-            <div className="absolute bottom-[-5%] right-[-5%] text-[10rem] font-black text-white/[0.01] pointer-events-none select-none uppercase tracking-tighter group-hover:text-white/[0.02] transition-all duration-1000">
+            <div className="absolute bottom-[-5%] right-[-5%] text-[8rem] font-black text-white/[0.01] pointer-events-none select-none uppercase tracking-tighter group-hover:text-white/[0.02] transition-all duration-1000">
               Meet
             </div>
           </div>
@@ -161,8 +161,8 @@ function App() {
       </main>
       
       {/* Footer (Centered) */}
-      <footer className="fixed bottom-12 left-0 w-full flex justify-center z-20 pointer-events-none">
-        <span className="text-[9px] uppercase tracking-[0.6em] font-black text-white/20 italic">
+      <footer className="fixed bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">
+        <span className="text-[8px] uppercase tracking-[0.6em] font-black text-white/20 italic">
           © 2026 Mark Lindo — Manila, PH
         </span>
       </footer>
