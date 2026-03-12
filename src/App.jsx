@@ -63,8 +63,8 @@ const InteractiveBackground = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.2;
-        this.vy = (Math.random() - 0.5) * 0.2;
+        this.vx = (Math.random() - 0.5) * 0.1;
+        this.vy = (Math.random() - 0.5) * 0.1;
         this.radius = 1;
       }
 
@@ -114,10 +114,10 @@ const InteractiveBackground = () => {
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 180) {
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - dist / 180)})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.4;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
