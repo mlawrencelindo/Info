@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { Github, Linkedin, Mail, MessageSquare, Calendar, ArrowUpRight } from 'lucide-react';
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { Github, Linkedin, Mail, MessageSquare, Calendar, ArrowUpRight, X } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -48,6 +48,8 @@ function App() {
   const whatsapp = "https://wa.me/639468796618";
   const bookingLink = "https://calendar.notion.so/meet/marklawrenceperezlindo/jpd814oup";
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 100, damping: 30 });
@@ -90,14 +92,14 @@ function App() {
           
           <motion.h1 
             variants={fadeUp} 
-            className="text-[clamp(2.5rem,6vw,5rem)] leading-none tracking-[0.5em] font-black uppercase mr-[-0.5em]"
+            className="text-[clamp(2rem,7vw,4.5rem)] leading-none tracking-[0.25em] font-black uppercase whitespace-nowrap"
           >
             {name}
           </motion.h1>
 
           <motion.p 
             variants={fadeUp}
-            className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.2em]"
+            className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
           >
             {bio}
           </motion.p>
@@ -121,36 +123,96 @@ function App() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative"
+          className="relative pt-4"
         >
-          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden p-10 md:p-12 flex flex-col items-center group shadow-2xl">
+          {/* Calendar Rings */}
+          <div className="absolute top-0 left-1/4 w-1.5 h-6 bg-white/10 rounded-full z-20"></div>
+          <div className="absolute top-0 right-1/4 w-1.5 h-6 bg-white/10 rounded-full z-20"></div>
+
+          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2rem] overflow-hidden p-12 md:p-16 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
             
-            <div className="mb-6 p-5 bg-white/[0.05] rounded-2xl border border-white/10 transition-colors">
-              <Calendar size={28} strokeWidth={1.5} className="text-white" />
-            </div>
-            
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-widest mb-5 leading-tight text-center whitespace-nowrap">
-              Work <span className="text-white/10">Together.</span>
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6 leading-tight text-center whitespace-nowrap relative z-10">
+              Work <span className="text-white/10 group-hover:text-white/20 transition-colors">Together.</span>
             </h2>
             
-            <p className="text-white/30 text-xs font-medium mb-10 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center">
+            <p className="text-white/30 text-xs font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
               Let's connect and build the next generation of digital architecture.
             </p>
             
-            <motion.a 
+            <motion.button 
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
-              href={bookingLink}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white text-black px-10 py-5 rounded-xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3"
+              onClick={() => setIsModalOpen(true)}
+              className="bg-white text-black px-12 py-6 rounded-xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
             >
               Schedule <ArrowUpRight size={16} />
-            </motion.a>
+            </motion.button>
           </div>
         </motion.div>
       </main>
+
+      {/* Modern Booking Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-md"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-5xl h-full max-h-[85vh] bg-white rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="p-6 flex justify-between items-center border-b border-black/5">
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                      <Calendar size={14} className="text-white" />
+                   </div>
+                   <span className="text-[10px] uppercase tracking-[0.3em] font-black text-black">Booking — Notion Calendar</span>
+                </div>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-3 hover:bg-black/5 rounded-full transition-colors group"
+                >
+                  <X size={20} className="text-black transition-transform group-hover:rotate-90 duration-300" />
+                </button>
+              </div>
+
+              {/* Iframe Content */}
+              <div className="flex-1 w-full relative bg-[#fcfcfc]">
+                <iframe
+                  src={bookingLink}
+                  className="w-full h-full border-none"
+                  title="Notion Calendar Booking"
+                  allow="payment"
+                />
+                
+                {/* Fallback Overlay (In case Notion blocks iframes) */}
+                <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-12 text-center opacity-0 hover:opacity-100 transition-opacity bg-white/80 backdrop-blur-sm z-0">
+                   <p className="text-black/40 text-sm font-medium uppercase tracking-widest mb-6 max-w-xs">
+                     If the calendar doesn't appear, please use the direct link below.
+                   </p>
+                   <a 
+                    href={bookingLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-black font-black uppercase tracking-[0.3em] text-[10px] border-b-2 border-black pb-1 hover:text-black/60 hover:border-black/20 transition-all pointer-events-auto"
+                   >
+                     Direct Link <ArrowUpRight size={14} className="inline ml-1" />
+                   </a>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Footer (Centered) */}
       <footer className="fixed bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">
