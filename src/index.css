@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #f9f9f9;
-  --color-text: #121212;
-  --color-secondary: #666666;
-  --color-border: rgba(0, 0, 0, 0.06);
+  --color-bg: #050505;
+  --color-text: #f0f0f0;
+  --color-accent: #ffffff;
+  --color-border: rgba(255, 255, 255, 0.08);
 }
 
 body {
@@ -15,15 +15,34 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.02em;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
 }
 
 ::selection {
-  background: #121212;
-  color: #ffffff;
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
 }
