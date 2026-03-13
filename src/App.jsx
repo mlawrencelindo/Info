@@ -45,7 +45,8 @@ const OptimizedBackground = ({ isMobile }) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d', { alpha: false }); // Performance boost: disable alpha for canvas context
+    // Aggressive optimization: alpha: false and desynchronized for low-latency
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true }); 
     let animationFrameId;
     let particles = [];
     let width, height;
@@ -62,19 +63,16 @@ const OptimizedBackground = ({ isMobile }) => {
 
     class Particle {
       constructor() {
-        this.reset();
+        this.init();
       }
 
       init() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.15;
-        this.vy = (Math.random() - 0.5) * 0.15;
-        this.radius = Math.random() * 1 + 0.5;
-      }
-
-      reset() {
-        this.init();
+        // Slower velocities are easier on the CPU
+        this.vx = (Math.random() - 0.5) * 0.1;
+        this.vy = (Math.random() - 0.5) * 0.1;
+        this.radius = Math.random() * 0.8 + 0.4;
       }
 
       update() {
@@ -82,18 +80,18 @@ const OptimizedBackground = ({ isMobile }) => {
         this.y += this.vy;
 
         if (this.x < 0) this.x = width;
-        if (this.x > width) this.x = 0;
+        else if (this.x > width) this.x = 0;
         if (this.y < 0) this.y = height;
-        if (this.y > height) this.y = 0;
+        else if (this.y > height) this.y = 0;
 
         if (!isMobile) {
           const dx = mouse.current.x - this.x;
           const dy = mouse.current.y - this.y;
-          const dist = dx * dx + dy * dy;
-          if (dist < 150 * 150) {
-            const force = (150 - Math.sqrt(dist)) / 150;
-            this.x -= dx * force * 0.02;
-            this.y -= dy * force * 0.02;
+          // Use squared distance to avoid expensive Math.sqrt()
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 120 * 120) {
+            this.x -= dx * 0.002;
+            this.y -= dy * 0.002;
           }
         }
       }
@@ -101,18 +99,18 @@ const OptimizedBackground = ({ isMobile }) => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff22';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
         ctx.fill();
       }
     }
 
     const init = () => {
       particles = [];
-      const density = isMobile ? 20000 : 10000;
-      const count = Math.min(Math.floor((width * height) / density), isMobile ? 40 : 100);
+      // Aggressive particle reduction for low-end devices
+      const density = isMobile ? 30000 : 15000;
+      const count = Math.min(Math.floor((width * height) / density), isMobile ? 30 : 70);
       for (let i = 0; i < count; i++) {
         const p = new Particle();
-        p.init();
         particles.push(p);
       }
     };
@@ -121,7 +119,11 @@ const OptimizedBackground = ({ isMobile }) => {
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, width, height);
       
-      const connectDistSq = (isMobile ? 100 : 150) ** 2;
+      const connectDistSq = (isMobile ? 90 : 130) ** 2;
+      
+      // Single pass rendering
+      ctx.beginPath();
+      ctx.lineWidth = 0.4;
       
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -132,19 +134,16 @@ const OptimizedBackground = ({ isMobile }) => {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
-          const distSq = dx * dx + dy * dy;
+          const dSq = dx * dx + dy * dy;
 
-          if (distSq < connectDistSq) {
-            const opacity = 1 - Math.sqrt(distSq) / Math.sqrt(connectDistSq);
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`;
-            ctx.lineWidth = 0.5;
+          if (dSq < connectDistSq) {
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
           }
         }
       }
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.stroke();
 
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -171,7 +170,7 @@ function App() {
   const linkedin = "https://www.linkedin.com/in/mlawrencelindo/";
   const github = "https://github.com/mlawrencelindo";
   const whatsapp = "https://wa.me/639468796618";
-  const bookingLink = "https://calendar.notion.so/meet/marklawrenceperezlindo/jpd814oup";
+  const bookingLink = "https://calendar.notion.so/meet/marklawrenceperezlindo/booking";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
