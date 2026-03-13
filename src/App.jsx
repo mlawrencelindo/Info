@@ -146,7 +146,7 @@ function App() {
             variants={stagger}
             className="flex flex-wrap gap-3 pt-2"
           >
-            <IconLink href={`mailto:${email}`} icon={Mail} label="Email" />
+            <IconLink href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`} icon={Mail} label="Email" />
             <IconLink href={linkedin} icon={Linkedin} label="LinkedIn" />
             <IconLink href={github} icon={Github} label="GitHub" />
             <IconLink href={whatsapp} icon={MessageSquare} label="WhatsApp" />
