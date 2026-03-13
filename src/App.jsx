@@ -59,7 +59,7 @@ function App() {
       setIsLoading(true);
       setMinLoadComplete(false);
       setShowFallback(false);
-      
+
       const minLoadTimer = setTimeout(() => {
         setMinLoadComplete(true);
       }, 1500);
@@ -70,7 +70,7 @@ function App() {
           return prevLoading;
         });
       }, 10000);
-      
+
       return () => {
         clearTimeout(minLoadTimer);
         clearTimeout(fallbackTimer);
@@ -103,14 +103,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black font-sans overflow-hidden flex items-center justify-center">
-      <motion.div 
+      <motion.div
         className="fixed inset-0 z-[1] pointer-events-none"
         style={{
           background: `radial-gradient(circle 800px at ${springX}px ${springY}px, rgba(255,255,255,0.03), transparent)`
         }}
       />
-      
-      <motion.main 
+
+      <motion.main
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
@@ -127,22 +127,22 @@ function App() {
               Systems Engineer
             </span>
           </motion.div>
-          
-          <motion.h1 
-            variants={fadeUp} 
+
+          <motion.h1
+            variants={fadeUp}
             className="text-[clamp(2rem,7vw,4.5rem)] leading-none tracking-[0.25em] font-black uppercase whitespace-nowrap"
           >
             {name}
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             variants={fadeUp}
             className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
           >
             {bio}
           </motion.p>
 
-          <motion.div 
+          <motion.div
             variants={stagger}
             className="flex flex-wrap gap-3 pt-2"
           >
@@ -172,7 +172,7 @@ function App() {
             <p className="text-white/30 text-xs font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
               Let's connect and build the next generation of digital architecture.
             </p>
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsModalOpen(true)}
@@ -203,7 +203,7 @@ function App() {
             >
               <div className="p-6 flex justify-between items-center bg-white border-b border-black/5 z-20">
                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+                   <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">        
                       <Calendar size={14} className="text-white" />
                    </div>
                    <span className="text-[10px] uppercase tracking-[0.3em] font-black text-black">Booking — Notion Calendar</span>
@@ -216,26 +216,26 @@ function App() {
                 </button>
               </div>
 
-              <div className="flex-1 w-full relative bg-[#050505] overflow-hidden hide-scrollbar">
+              <div className="flex-1 w-full relative bg-[#050505] overflow-hidden hide-scrollbar">       
                 {!showIframe && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050505]">
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050505]">  
                     <div className="relative w-32 h-32">
-                      <motion.div 
+                      <motion.div
                         animate={{ rotate: 45, scale: [0.8, 1, 0.8] }}
                         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute inset-0 m-auto w-10 h-10 border-2 border-white"
                       />
-                      <motion.div 
+                      <motion.div
                         animate={{ rotate: -45, scale: [1, 1.2, 1] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute inset-0 m-auto w-16 h-16 border border-white/10"
                       />
-                      <motion.div 
+                      <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                         className="absolute inset-0 border-[3px] border-dotted border-white/5 rounded-full"
                       />
-                      <motion.div 
+                      <motion.div
                         animate={{ scale: [0.5, 1.5], opacity: [0.4, 0] }}
                         transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
                         className="absolute inset-0 border border-white/20 rounded-full"
@@ -247,10 +247,10 @@ function App() {
                   src={bookingLink}
                   onLoad={handleIframeLoad}
                   className={`w-full border-none hide-scrollbar absolute left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
-                  style={{ 
+                  style={{
                     background: '#050505',
-                    height: window.innerWidth < 768 ? '100%' : 'calc(100% + 130px)',
-                    top: window.innerWidth < 768 ? '-30' : '-40px'
+                    height: 'calc(112% + 40px)',
+                    top: '-30px'
                   }}
                   title="Notion Calendar Booking"
                   allow="payment"
@@ -258,7 +258,7 @@ function App() {
 
                 <AnimatePresence>
                   {showFallback && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-[#050505] z-30"
@@ -266,9 +266,9 @@ function App() {
                        <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
                          The calendar is taking longer than expected.
                        </p>
-                       <a 
-                        href={bookingLink} 
-                        target="_blank" 
+                       <a
+                        href={bookingLink}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="bg-white text-black px-8 py-4 rounded-xl text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white/80 transition-all"
                        >
@@ -282,8 +282,8 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
-      
-      <footer className="fixed bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">
+
+      <footer className="fixed bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">    
         <span className="text-[8px] uppercase tracking-[0.6em] font-black text-white/20 italic">
           © 2026 Mark Lindo — Manila, PH
         </span>
