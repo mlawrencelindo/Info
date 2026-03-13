@@ -39,6 +39,113 @@ const IconLink = ({ href, icon: Icon, label }) => (
   </motion.a>
 );
 
+const InteractiveBackground = ({ isMobile }) => {
+  const canvasRef = useRef(null);
+  const mouse = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+    let particles = [];
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      init();
+    };
+
+    const handleMouseMove = (e) => {
+      mouse.current = { x: e.clientX, y: e.clientY };
+    };
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.08;
+        this.vy = (Math.random() - 0.5) * 0.08;
+        this.radius = Math.random() * 1.2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        if (!isMobile) {
+          const dx = mouse.current.x - this.x;
+          const dy = mouse.current.y - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 150) {
+            this.x -= dx * 0.005;
+            this.y -= dy * 0.005;
+          }
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fill();
+      }
+    }
+
+    const init = () => {
+      particles = [];
+      // Higher density for more visibility
+      const baseArea = isMobile ? 15000 : 8000;
+      const count = Math.floor((canvas.width * canvas.height) / baseArea);
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const connectDist = isMobile ? 120 : 160;
+      
+      particles.forEach((p, i) => {
+        p.update();
+        p.draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < connectDist) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * (1 - dist / connectDist)})`;
+            ctx.lineWidth = 0.8;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('resize', handleResize);
+    if (!isMobile) window.addEventListener('mousemove', handleMouseMove);
+    handleResize();
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isMobile]);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-80" />;
+};
+
 function App() {
   const name = "Mark Lindo";
   const bio = "Architecting resilient systems. Let's build something exceptional together.";
@@ -119,6 +226,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black overflow-hidden flex items-center justify-center relative">
+      {/* Interactive Background */}
+      <InteractiveBackground isMobile={isMobile} />
+      
       {/* Dynamic Mouse Gradient (Desktop only) */}
       <motion.div 
         className="fixed inset-0 z-[1] pointer-events-none hidden md:block"
