@@ -120,7 +120,7 @@ function App() {
           initial="hidden"
           animate="show"
           variants={stagger}
-          className="flex flex-col items-start text-left space-y-4"
+          className="flex flex-col items-start text-left space-y-8"
         >
           <motion.div variants={fadeUp}>
             <span className="text-[10px] uppercase tracking-[0.6em] text-white/30 font-black">
@@ -128,12 +128,13 @@ function App() {
             </span>
           </motion.div>
 
-          <motion.h1 
-            variants={fadeUp} 
+          <motion.h1
+            variants={fadeUp}
             className="text-[clamp(2rem,7vw,4.5rem)] leading-none tracking-[0.25em] font-black uppercase whitespace-nowrap"
           >
             {name}
           </motion.h1>
+
           <motion.p
             variants={fadeUp}
             className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
@@ -171,15 +172,14 @@ function App() {
             <p className="text-white/30 text-xs font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
               Let's connect and build the next generation of digital architecture.
             </p>
-            <motion.button
+            <motion.button 
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsModalOpen(true)}
-              className="bg-white text-black px-12 py-6 rounded-2xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
+              className="bg-white text-black px-12 py-6 rounded-2xl text-[12px] md:text-[14px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
             >
-              Schedule <ArrowUpRight size={16} />
-            </motion.button>
-          </div>
+              Schedule <ArrowUpRight size={18} />
+            </motion.button>          </div>
         </motion.div>
       </motion.main>
 
