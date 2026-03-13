@@ -217,7 +217,11 @@ function App() {
   const springY = useSpring(mouseY, { stiffness: 100, damping: 30 });
 
   useEffect(() => {
+    let lastCall = 0;
     const handleMouseMove = (e) => {
+      const now = Date.now();
+      if (now - lastCall < 16) return; // ~60fps throttle
+      lastCall = now;
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
