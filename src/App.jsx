@@ -49,10 +49,20 @@ const InteractiveBackground = ({ isMobile }) => {
     let animationFrameId;
     let particles = [];
 
+    let lastWidth = window.innerWidth;
+
     const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      init();
+      const currentWidth = window.innerWidth;
+      // Only re-init if width changes (prevents jump on mobile scroll when URL bar hides)
+      if (currentWidth !== lastWidth) {
+        canvas.width = currentWidth;
+        canvas.height = window.innerHeight;
+        lastWidth = currentWidth;
+        init();
+      } else {
+        // Just update height if needed without re-init
+        canvas.height = window.innerHeight;
+      }
     };
 
     const handleMouseMove = (e) => {
