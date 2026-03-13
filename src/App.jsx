@@ -99,16 +99,16 @@ const OptimizedBackground = ({ isMobile }) => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
         ctx.fill();
       }
     }
 
     const init = () => {
       particles = [];
-      // Aggressive particle reduction for low-end devices
-      const density = isMobile ? 30000 : 15000;
-      const count = Math.min(Math.floor((width * height) / density), isMobile ? 30 : 70);
+      // Significant density increase for high visibility
+      const density = isMobile ? 15000 : 8000;
+      const count = Math.min(Math.floor((width * height) / density), isMobile ? 60 : 130);
       for (let i = 0; i < count; i++) {
         const p = new Particle();
         particles.push(p);
@@ -119,11 +119,11 @@ const OptimizedBackground = ({ isMobile }) => {
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, width, height);
       
-      const connectDistSq = (isMobile ? 90 : 130) ** 2;
+      const connectDistSq = (isMobile ? 120 : 160) ** 2;
       
       // Single pass rendering
       ctx.beginPath();
-      ctx.lineWidth = 0.4;
+      ctx.lineWidth = 0.5;
       
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -142,7 +142,7 @@ const OptimizedBackground = ({ isMobile }) => {
           }
         }
       }
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
       ctx.stroke();
 
       animationFrameId = requestAnimationFrame(animate);
