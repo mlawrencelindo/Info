@@ -120,7 +120,7 @@ function App() {
           initial="hidden"
           animate="show"
           variants={stagger}
-          className="flex flex-col items-start text-left space-y-8"
+          className="flex flex-col items-start text-left space-y-4"
         >
           <motion.div variants={fadeUp}>
             <span className="text-[10px] uppercase tracking-[0.6em] text-white/30 font-black">
@@ -128,13 +128,12 @@ function App() {
             </span>
           </motion.div>
 
-          <motion.h1
-            variants={fadeUp}
+          <motion.h1 
+            variants={fadeUp} 
             className="text-[clamp(2rem,7vw,4.5rem)] leading-none tracking-[0.25em] font-black uppercase whitespace-nowrap"
           >
             {name}
           </motion.h1>
-
           <motion.p
             variants={fadeUp}
             className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
