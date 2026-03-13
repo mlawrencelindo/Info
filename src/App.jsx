@@ -297,9 +297,9 @@ function App() {
             className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 pt-2"
           >
             <IconLink href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`} icon={Mail} label="Email" />
+            <IconLink href={whatsapp} icon={MessageSquare} label="WhatsApp" />
             <IconLink href={linkedin} icon={Linkedin} label="LinkedIn" />
             <IconLink href={github} icon={Github} label="GitHub" />
-            <IconLink href={whatsapp} icon={MessageSquare} label="WhatsApp" />
           </motion.div>
         </motion.div>
 
