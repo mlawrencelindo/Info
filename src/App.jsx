@@ -29,7 +29,7 @@ const IconLink = ({ href, icon: Icon, label }) => (
     target="_blank"
     rel="noopener noreferrer"
     aria-label={label}
-    className="group relative p-4 border border-white/5 hover:border-white/20 rounded-xl bg-white/[0.03] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 flex items-center justify-center overflow-hidden"
+    className="group relative p-4 md:p-4 border border-white/5 hover:border-white/20 rounded-xl bg-white/[0.03] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 flex items-center justify-center overflow-hidden"
   >
     <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     <Icon size={20} strokeWidth={1.5} className="text-white/40 group-hover:text-white transition-colors relative z-10" />
@@ -59,6 +59,12 @@ const InteractiveBackground = () => {
       mouse.current = { x: e.clientX, y: e.clientY };
     };
 
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        mouse.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+    };
+
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
@@ -78,7 +84,7 @@ const InteractiveBackground = () => {
         const dx = mouse.current.x - this.x;
         const dy = mouse.current.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 200) {
+        if (distance < 150) {
           this.x -= dx * 0.005;
           this.y -= dy * 0.005;
         }
@@ -94,7 +100,9 @@ const InteractiveBackground = () => {
 
     const init = () => {
       particles = [];
-      const count = Math.floor((canvas.width * canvas.height) / 12000);
+      // Reduce particle count on smaller screens for performance
+      const density = window.innerWidth < 768 ? 2000 : 1200;
+      const count = Math.floor((canvas.width * canvas.height) / density);
       for (let i = 0; i < count; i++) {
         particles.push(new Particle());
       }
@@ -114,9 +122,10 @@ const InteractiveBackground = () => {
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 120) {
+          const limit = window.innerWidth < 768 ? 100 : 120;
+          if (dist < limit) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / 120)})`;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / limit)})`;
             ctx.lineWidth = 0.4;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -130,12 +139,14 @@ const InteractiveBackground = () => {
 
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove);
     handleResize();
     animate();
 
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -206,10 +217,10 @@ function App() {
   }, [mouseX, mouseY]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black font-sans overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black font-sans overflow-x-hidden flex flex-col items-center justify-center">
       <InteractiveBackground />
       <motion.div 
-        className="fixed inset-0 z-[1] pointer-events-none"
+        className="fixed inset-0 z-[1] pointer-events-none hidden md:block"
         style={{
           background: `radial-gradient(circle 800px at ${springX}px ${springY}px, rgba(255,255,255,0.03), transparent)`
         }}
@@ -219,13 +230,14 @@ function App() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 w-full max-w-screen-xl mx-auto px-8 md:px-16 py-16 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-20 items-center"
+        className="relative z-10 w-full max-w-screen-xl mx-auto px-6 md:px-16 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-12 lg:gap-20 items-center"
       >
+        {/* Left Side: Content */}
         <motion.div
           initial="hidden"
           animate="show"
           variants={stagger}
-          className="flex flex-col items-start text-left space-y-8"
+          className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 md:space-y-8"
         >
           <motion.div variants={fadeUp}>
             <span className="text-[10px] uppercase tracking-[0.6em] text-white/30 font-black">
@@ -235,21 +247,21 @@ function App() {
           
           <motion.h1 
             variants={fadeUp} 
-            className="text-[clamp(2rem,7vw,4.5rem)] leading-none tracking-[0.25em] font-black uppercase whitespace-nowrap"
+            className="text-[clamp(2.5rem,10vw,4.5rem)] leading-none tracking-[0.25em] font-black uppercase whitespace-nowrap"
           >
             {name}
           </motion.h1>
 
           <motion.p 
             variants={fadeUp}
-            className="text-base md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
+            className="text-sm md:text-lg font-medium leading-relaxed text-white/40 max-w-lg uppercase tracking-[0.1em]"
           >
             {bio}
           </motion.p>
 
           <motion.div 
             variants={stagger}
-            className="flex flex-wrap gap-3 pt-2"
+            className="flex flex-wrap justify-center lg:justify-start gap-3 pt-2"
           >
             <IconLink href={`mailto:${email}`} icon={Mail} label="Email" />
             <IconLink href={linkedin} icon={Linkedin} label="LinkedIn" />
@@ -258,30 +270,37 @@ function App() {
           </motion.div>
         </motion.div>
 
+        {/* Minimal Divider */}
         <div className="hidden lg:block w-px h-100 bg-white/5 self-center"></div>
+        <div className="block lg:hidden w-full h-px bg-white/5 my-4"></div>
 
+        {/* Right Side: Booking */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative pt-4"
+          className="relative pt-4 w-full max-w-sm mx-auto lg:max-w-none"
         >
+          {/* Calendar Rings */}
           <div className="absolute top-0 left-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
           <div className="absolute top-0 right-1/4 w-2 h-6 bg-white/10 rounded-full z-20"></div>
 
-          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[3rem] overflow-hidden p-12 md:p-16 flex flex-col items-center group shadow-2xl">
+          <div className="relative bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[3rem] overflow-hidden p-8 md:p-16 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6 leading-tight text-center whitespace-nowrap relative z-10">
+            
+            <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-tight text-center whitespace-nowrap relative z-10">
               Work <span className="text-white/10">Together.</span>
             </h2>
-            <p className="text-white/30 text-xs font-medium mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
+            
+            <p className="text-white/30 text-[10px] md:text-xs font-medium mb-8 md:mb-12 max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
               Let's connect and build the next generation of digital architecture.
             </p>
+            
             <motion.button 
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsModalOpen(true)}
-              className="bg-white text-black px-12 py-6 rounded-2xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
+              className="bg-white text-black px-8 md:px-12 py-4 md:py-6 rounded-2xl text-[10px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
             >
               Schedule <ArrowUpRight size={16} />
             </motion.button>
@@ -289,13 +308,14 @@ function App() {
         </motion.div>
       </motion.main>
 
+      {/* Modern Booking Modal */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 bg-black/95 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-12 bg-black/95 backdrop-blur-md"
             onClick={() => setIsModalOpen(false)}
           >
             <motion.div
@@ -303,15 +323,16 @@ function App() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.98, opacity: 0, y: 10 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-5xl h-full max-h-[85vh] bg-[#ffffff] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col ring-1 ring-white/10"
+              className="relative w-full max-w-5xl h-full max-h-[90vh] md:max-h-[85vh] bg-[#ffffff] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6 flex justify-between items-center bg-white border-b border-black/5 z-20">
+              {/* Modal Header */}
+              <div className="p-4 md:p-6 flex justify-between items-center bg-white border-b border-black/5 z-20">
                 <div className="flex items-center gap-3">
                    <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
                       <Calendar size={14} className="text-white" />
                    </div>
-                   <span className="text-[10px] uppercase tracking-[0.3em] font-black text-black">Booking — Notion Calendar</span>
+                   <span className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-black text-black">Booking — Notion</span>
                 </div>
                 <button
                   onClick={() => setIsModalOpen(false)}
@@ -321,29 +342,25 @@ function App() {
                 </button>
               </div>
 
+              {/* Iframe Content */}
               <div className="flex-1 w-full relative bg-[#050505] overflow-hidden hide-scrollbar">
                 {!showIframe && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050505]">
-                    <div className="relative w-32 h-32">
+                    <div className="relative w-24 h-24 md:w-32 md:h-32">
                       <motion.div 
                         animate={{ rotate: 45, scale: [0.8, 1, 0.8] }}
                         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute inset-0 m-auto w-10 h-10 border-2 border-white"
+                        className="absolute inset-0 m-auto w-8 h-8 md:w-10 md:h-10 border-2 border-white"
                       />
                       <motion.div 
                         animate={{ rotate: -45, scale: [1, 1.2, 1] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute inset-0 m-auto w-16 h-16 border border-white/10"
+                        className="absolute inset-0 m-auto w-12 h-12 md:w-16 md:h-16 border border-white/10"
                       />
                       <motion.div 
                         animate={{ rotate: 360 }}
                         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-0 border-[3px] border-dotted border-white/5 rounded-full"
-                      />
-                      <motion.div 
-                        animate={{ scale: [0.5, 1.5], opacity: [0.4, 0] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
-                        className="absolute inset-0 border border-white/20 rounded-full"
+                        className="absolute inset-0 border-[2px] md:border-[3px] border-dotted border-white/5 rounded-full"
                       />
                     </div>
                   </div>
@@ -351,20 +368,25 @@ function App() {
                 <iframe
                   src={bookingLink}
                   onLoad={handleIframeLoad}
-                  className={`w-full h-[calc(100%+120px)] border-none hide-scrollbar absolute -top-[30px] left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
-                  style={{ background: '#050505' }}
+                  className={`w-full border-none hide-scrollbar absolute left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
+                  style={{ 
+                    background: '#050505',
+                    height: window.innerWidth < 768 ? '100%' : 'calc(100% + 120px)',
+                    top: window.innerWidth < 768 ? '0' : '-30px'
+                  }}
                   title="Notion Calendar Booking"
                   allow="payment"
                 />
 
+                {/* Smart Fallback Overlay */}
                 <AnimatePresence>
                   {showFallback && (
                     <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-[#050505] z-30"
+                      className="absolute inset-0 flex flex-col items-center justify-center p-8 md:p-12 text-center bg-[#050505] z-30"
                     >
-                       <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
+                       <p className="text-white/40 text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] mb-8 max-w-xs leading-loose">
                          The calendar is taking longer than expected.
                        </p>
                        <a 
@@ -384,8 +406,9 @@ function App() {
         )}
       </AnimatePresence>
       
-      <footer className="fixed bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">
-        <span className="text-[8px] uppercase tracking-[0.6em] font-black text-white/20 italic">
+      {/* Footer (Centered) */}
+      <footer className="fixed bottom-6 md:bottom-10 left-0 w-full flex justify-center z-20 pointer-events-none">
+        <span className="text-[7px] md:text-[8px] uppercase tracking-[0.6em] font-black text-white/20 italic">
           © 2026 Mark Lindo — Manila, PH
         </span>
       </footer>
