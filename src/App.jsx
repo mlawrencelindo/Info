@@ -33,7 +33,7 @@ const IconLink = ({ href, icon: Icon, label }) => (
   >
     <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     <Icon size={20} strokeWidth={1.5} className="text-white/40 group-hover:text-white transition-colors relative z-10" />
-    <span className="absolute -top-10 scale-0 group-hover:scale-100 transition-all text-[9px] uppercase tracking-[0.2em] font-black text-white bg-white/10 backdrop-blur-xl px-3 py-1 rounded-full border border-white/10 whitespace-nowrap pointer-events-none z-20">
+    <span className="absolute -top-12 scale-0 group-hover:scale-100 transition-all text-[11px] uppercase tracking-[0.2em] font-black text-white bg-white/10 backdrop-blur-xl px-4 py-2 rounded-full border border-white/10 whitespace-nowrap pointer-events-none z-20">
       {label}
     </span>
   </motion.a>
@@ -102,7 +102,7 @@ function App() {
   }, [mouseX, mouseY]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black font-sans overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black overflow-hidden flex items-center justify-center">
       <motion.div
         className="fixed inset-0 z-[1] pointer-events-none"
         style={{
