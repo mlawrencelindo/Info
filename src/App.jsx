@@ -176,7 +176,7 @@ function App() {
               whileHover={{ scale: 1.05, shadow: "0 0 40px rgba(255,255,255,0.1)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsModalOpen(true)}
-              className="bg-white text-black px-12 py-6 rounded-2xl text-[12px] md:text-[14px] uppercase tracking-[0.5em] font-black hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
+              className="bg-white text-black px-12 py-6 rounded-2xl text-[12px] md:text-[14px] uppercase tracking-[0.5em] font-semibold hover:bg-white/90 transition-all shadow-2xl flex items-center gap-3 relative z-10 cursor-pointer"
             >
               Schedule <ArrowUpRight size={18} />
             </motion.button>          </div>
