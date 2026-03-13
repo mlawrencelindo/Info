@@ -39,7 +39,7 @@ const IconLink = ({ href, icon: Icon, label }) => (
   </motion.a>
 );
 
-const OptimizedBackground = ({ isMobile, isLowEnd }) => {
+const OptimizedBackground = ({ isMobile }) => {
   const canvasRef = useRef(null);
   const mouse = useRef({ x: -1000, y: -1000 });
 
@@ -68,8 +68,8 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
       init() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * (isLowEnd ? 0.1 : 0.15);
-        this.vy = (Math.random() - 0.5) * (isLowEnd ? 0.1 : 0.15);
+        this.vx = (Math.random() - 0.5) * 0.15;
+        this.vy = (Math.random() - 0.5) * 0.15;
         this.radius = Math.random() * 1 + 0.5;
       }
 
@@ -86,7 +86,7 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
         if (this.y < 0) this.y = height;
         if (this.y > height) this.y = 0;
 
-        if (!isMobile && !isLowEnd) {
+        if (!isMobile) {
           const dx = mouse.current.x - this.x;
           const dy = mouse.current.y - this.y;
           const dist = dx * dx + dy * dy;
@@ -101,15 +101,15 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = isLowEnd ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.5)';
+        ctx.fillStyle = '#ffffff22';
         ctx.fill();
       }
     }
 
     const init = () => {
       particles = [];
-      const density = isLowEnd ? 20000 : (isMobile ? 15000 : 10000);
-      const count = Math.min(Math.floor((width * height) / density), isLowEnd ? 30 : (isMobile ? 50 : 100));
+      const density = isMobile ? 20000 : 10000;
+      const count = Math.min(Math.floor((width * height) / density), isMobile ? 40 : 100);
       for (let i = 0; i < count; i++) {
         const p = new Particle();
         p.init();
@@ -121,7 +121,7 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, width, height);
       
-      const connectDistSq = (isLowEnd ? 100 : (isMobile ? 120 : 150)) ** 2;
+      const connectDistSq = (isMobile ? 100 : 150) ** 2;
       
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -137,8 +137,8 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
           if (distSq < connectDistSq) {
             const opacity = 1 - Math.sqrt(distSq) / Math.sqrt(connectDistSq);
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * (isLowEnd ? 0.2 : 0.3)})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`;
+            ctx.lineWidth = 0.5;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
@@ -206,18 +206,13 @@ function App() {
     }
   }, [isModalOpen]);
 
-  const [isLowEnd, setIsLowEnd] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Detect mobile or low memory/slow hardware
-    const isMobileDevice = window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent);
-    const lowPowerMode = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
-    setIsMobile(isMobileDevice);
-    setIsLowEnd(isMobileDevice || lowPowerMode);
-    
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleIframeLoad = () => {
@@ -254,7 +249,7 @@ function App() {
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black overflow-hidden flex items-center justify-center relative">
       {/* Optimized Background */}
-      <OptimizedBackground isMobile={isMobile} isLowEnd={isLowEnd} />
+      <OptimizedBackground isMobile={isMobile} />
       
       {/* Dynamic Mouse Gradient (Desktop only) */}
       <motion.div 
@@ -301,7 +296,7 @@ function App() {
             variants={stagger}
             className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 pt-2"
           >
-            <IconLink href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`} icon={Mail} label="Email" />
+            <IconLink href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`} icon={Mail} label="Gmail" />
             <IconLink href={whatsapp} icon={MessageSquare} label="WhatsApp" />
             <IconLink href={linkedin} icon={Linkedin} label="LinkedIn" />
             <IconLink href={github} icon={Github} label="GitHub" />
@@ -322,7 +317,7 @@ function App() {
           <div className="absolute top-0 left-1/4 w-1.5 md:w-2 h-4 md:h-6 bg-white/10 rounded-full z-20"></div>
           <div className="absolute top-0 right-1/4 w-1.5 md:w-2 h-4 md:h-6 bg-white/10 rounded-full z-20"></div>
 
-          <div className={`relative w-full max-w-[340px] md:max-w-none bg-white/[0.02] border border-white/5 ${!isLowEnd ? 'backdrop-blur-3xl' : ''} rounded-[2.5rem] md:rounded-[3rem] overflow-hidden p-10 md:p-16 flex flex-col items-center group shadow-2xl`}>
+          <div className="relative w-full max-w-[340px] md:max-w-none bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[3rem] overflow-hidden p-10 md:p-16 flex flex-col items-center group shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
             
             <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-tight text-center whitespace-nowrap relative z-10">
@@ -352,7 +347,7 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className={`fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-12 bg-black/95 ${!isLowEnd ? 'backdrop-blur-md' : ''}`}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-12 bg-black/95 backdrop-blur-md"
             onClick={() => setIsModalOpen(false)}
           >
             <motion.div
@@ -455,10 +450,8 @@ function App() {
         </span>
       </footer>
 
-      {/* Grain Overlay - Disabled on Low End */}
-      {!isLowEnd && (
-        <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
-      )}
+      {/* Grain Overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
     </div>
   );
 }
