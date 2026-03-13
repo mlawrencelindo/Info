@@ -39,110 +39,6 @@ const IconLink = ({ href, icon: Icon, label }) => (
   </motion.a>
 );
 
-const InteractiveBackground = () => {
-  const canvasRef = useRef(null);
-  const mouse = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-    let particles = [];
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      init();
-    };
-
-    const handleMouseMove = (e) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-    };
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.1;
-        this.vy = (Math.random() - 0.5) * 0.1;
-        this.radius = 1;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-
-        const dx = mouse.current.x - this.x;
-        const dy = mouse.current.y - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 200) {
-          this.x -= dx * 0.005;
-          this.y -= dy * 0.005;
-        }
-      }
-
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.fill();
-      }
-    }
-
-    const init = () => {
-      particles = [];
-      const count = Math.floor((canvas.width * canvas.height) * 2000 / 1200);
-      for (let i = 0; i < count; i++) {
-        particles.push(new Particle());
-      }
-    };
-
-    const animate = () => {
-      ctx.fillStyle = '#050505';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      particles.forEach((p, i) => {
-        p.update();
-        p.draw();
-
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.4;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
-      });
-
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    handleResize();
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
-};
-
 function App() {
   const name = "Mark Lindo";
   const bio = "Architecting resilient systems. Let's build something exceptional together.";
@@ -207,7 +103,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black font-sans overflow-hidden flex items-center justify-center">
-      <InteractiveBackground />
       <motion.div 
         className="fixed inset-0 z-[1] pointer-events-none"
         style={{
