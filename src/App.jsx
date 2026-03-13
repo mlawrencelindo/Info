@@ -101,15 +101,15 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff22';
+        ctx.fillStyle = isLowEnd ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.5)';
         ctx.fill();
       }
     }
 
     const init = () => {
       particles = [];
-      const density = isLowEnd ? 30000 : (isMobile ? 20000 : 10000);
-      const count = Math.min(Math.floor((width * height) / density), isLowEnd ? 25 : (isMobile ? 40 : 100));
+      const density = isLowEnd ? 20000 : (isMobile ? 15000 : 10000);
+      const count = Math.min(Math.floor((width * height) / density), isLowEnd ? 30 : (isMobile ? 50 : 100));
       for (let i = 0; i < count; i++) {
         const p = new Particle();
         p.init();
@@ -121,7 +121,7 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, width, height);
       
-      const connectDistSq = (isLowEnd ? 80 : (isMobile ? 100 : 150)) ** 2;
+      const connectDistSq = (isLowEnd ? 100 : (isMobile ? 120 : 150)) ** 2;
       
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -137,8 +137,8 @@ const OptimizedBackground = ({ isMobile, isLowEnd }) => {
           if (distSq < connectDistSq) {
             const opacity = 1 - Math.sqrt(distSq) / Math.sqrt(connectDistSq);
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * (isLowEnd ? 0.1 : 0.15)})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * (isLowEnd ? 0.2 : 0.3)})`;
+            ctx.lineWidth = 0.6;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
@@ -455,8 +455,10 @@ function App() {
         </span>
       </footer>
 
-      {/* Grain Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+      {/* Grain Overlay - Disabled on Low End */}
+      {!isLowEnd && (
+        <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+      )}
     </div>
   );
 }
