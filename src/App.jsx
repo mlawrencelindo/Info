@@ -39,30 +39,21 @@ const IconLink = ({ href, icon: Icon, label }) => (
   </motion.a>
 );
 
-const InteractiveBackground = ({ isMobile }) => {
+const OptimizedBackground = ({ isMobile }) => {
   const canvasRef = useRef(null);
-  const mouse = useRef({ x: 0, y: 0 });
+  const mouse = useRef({ x: -1000, y: -1000 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false }); // Performance boost: disable alpha for canvas context
     let animationFrameId;
     let particles = [];
-
-    let lastWidth = window.innerWidth;
+    let width, height;
 
     const handleResize = () => {
-      const currentWidth = window.innerWidth;
-      // Only re-init if width changes (prevents jump on mobile scroll when URL bar hides)
-      if (currentWidth !== lastWidth) {
-        canvas.width = currentWidth;
-        canvas.height = window.innerHeight;
-        lastWidth = currentWidth;
-        init();
-      } else {
-        // Just update height if needed without re-init
-        canvas.height = window.innerHeight;
-      }
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      init();
     };
 
     const handleMouseMove = (e) => {
@@ -71,27 +62,38 @@ const InteractiveBackground = ({ isMobile }) => {
 
     class Particle {
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.08;
-        this.vy = (Math.random() - 0.5) * 0.08;
-        this.radius = Math.random() * 1.2;
+        this.reset();
+      }
+
+      init() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.15;
+        this.vy = (Math.random() - 0.5) * 0.15;
+        this.radius = Math.random() * 1 + 0.5;
+      }
+
+      reset() {
+        this.init();
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
 
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        if (this.x < 0) this.x = width;
+        if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        if (this.y > height) this.y = 0;
 
         if (!isMobile) {
           const dx = mouse.current.x - this.x;
           const dy = mouse.current.y - this.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 150) {
-            this.x -= dx * 0.005;
-            this.y -= dy * 0.005;
+          const dist = dx * dx + dy * dy;
+          if (dist < 150 * 150) {
+            const force = (150 - Math.sqrt(dist)) / 150;
+            this.x -= dx * force * 0.02;
+            this.y -= dy * force * 0.02;
           }
         }
       }
@@ -99,25 +101,30 @@ const InteractiveBackground = ({ isMobile }) => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fillStyle = '#ffffff22';
         ctx.fill();
       }
     }
 
     const init = () => {
       particles = [];
-      // Boost density for better visibility on both platforms
-      const baseArea = isMobile ? 10000 : 12000;
-      const count = Math.floor((canvas.width * canvas.height) / baseArea);
-      for (let i = 0; i < count; i++) particles.push(new Particle());
+      const density = isMobile ? 20000 : 10000;
+      const count = Math.min(Math.floor((width * height) / density), isMobile ? 40 : 100);
+      for (let i = 0; i < count; i++) {
+        const p = new Particle();
+        p.init();
+        particles.push(p);
+      }
     };
 
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#050505';
+      ctx.fillRect(0, 0, width, height);
       
-      const connectDist = isMobile ? 140 : 160; 
+      const connectDistSq = (isMobile ? 100 : 150) ** 2;
       
-      particles.forEach((p, i) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.update();
         p.draw();
 
@@ -125,19 +132,19 @@ const InteractiveBackground = ({ isMobile }) => {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
 
-          if (dist < connectDist) {
+          if (distSq < connectDistSq) {
+            const opacity = 1 - Math.sqrt(distSq) / Math.sqrt(connectDistSq);
             ctx.beginPath();
-            // Higher contrast lines
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.25 * (1 - dist / connectDist)})`;
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`;
+            ctx.lineWidth = 0.5;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
           }
         }
-      });
+      }
 
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -154,7 +161,7 @@ const InteractiveBackground = ({ isMobile }) => {
     };
   }, [isMobile]);
 
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-80" />;
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
 };
 
 function App() {
@@ -241,8 +248,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black overflow-hidden flex items-center justify-center relative">
-      {/* Interactive Background */}
-      <InteractiveBackground isMobile={isMobile} />
+      {/* Optimized Background */}
+      <OptimizedBackground isMobile={isMobile} />
       
       {/* Dynamic Mouse Gradient (Desktop only) */}
       <motion.div 
