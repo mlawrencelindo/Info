@@ -249,8 +249,8 @@ function App() {
                   className={`w-full border-none hide-scrollbar absolute left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
                   style={{ 
                     background: '#050505',
-                    height: window.innerWidth < 768 ? '100%' : 'calc(100% + 40px)',
-                    top: window.innerWidth < 768 ? '-20' : '-30px'
+                    height: window.innerWidth < 768 ? '100%' : 'calc(100% + 130px)',
+                    top: window.innerWidth < 768 ? '-30' : '-40px'
                   }}
                   title="Notion Calendar Booking"
                   allow="payment"
