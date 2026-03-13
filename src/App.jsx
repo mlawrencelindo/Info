@@ -39,128 +39,28 @@ const IconLink = ({ href, icon: Icon, label }) => (
   </motion.a>
 );
 
-const OptimizedBackground = ({ isMobile }) => {
-  const canvasRef = useRef(null);
-  const mouse = useRef({ x: -1000, y: -1000 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    // Aggressive optimization: alpha: false and desynchronized for low-latency
-    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true }); 
-    let animationFrameId;
-    let particles = [];
-    let width, height;
-
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      init();
-    };
-
-    const handleMouseMove = (e) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-    };
-
-    class Particle {
-      constructor() {
-        this.init();
-      }
-
-      init() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        // Slower velocities are easier on the CPU
-        this.vx = (Math.random() - 0.5) * 0.1;
-        this.vy = (Math.random() - 0.5) * 0.1;
-        this.radius = Math.random() * 0.8 + 0.4;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0) this.x = width;
-        else if (this.x > width) this.x = 0;
-        if (this.y < 0) this.y = height;
-        else if (this.y > height) this.y = 0;
-
-        if (!isMobile) {
-          const dx = mouse.current.x - this.x;
-          const dy = mouse.current.y - this.y;
-          // Use squared distance to avoid expensive Math.sqrt()
-          const distSq = dx * dx + dy * dy;
-          if (distSq < 120 * 120) {
-            this.x -= dx * 0.002;
-            this.y -= dy * 0.002;
-          }
-        }
-      }
-
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-        ctx.fill();
-      }
-    }
-
-    const init = () => {
-      particles = [];
-      // Significant density increase for high visibility
-      const density = isMobile ? 15000 : 8000;
-      const count = Math.min(Math.floor((width * height) / density), isMobile ? 60 : 130);
-      for (let i = 0; i < count; i++) {
-        const p = new Particle();
-        particles.push(p);
-      }
-    };
-
-    const animate = () => {
-      ctx.fillStyle = '#050505';
-      ctx.fillRect(0, 0, width, height);
+const ProfessionalBackground = () => {
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#000000]">
+      {/* Primary Radial Gradient */}
+      <div 
+        className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#121212_0%,_#000000_100%)]"
+      />
       
-      const connectDistSq = (isMobile ? 120 : 160) ** 2;
-      
-      // Single pass rendering
-      ctx.beginPath();
-      ctx.lineWidth = 0.5;
-      
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.update();
-        p.draw();
+      {/* Subtle Mesh/Grid Pattern */}
+      <div 
+        className="absolute inset-0 opacity-[0.15]"
+        style={{
+          backgroundImage: `linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
+        }}
+      />
 
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dSq = dx * dx + dy * dy;
-
-          if (dSq < connectDistSq) {
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-          }
-        }
-      }
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-      ctx.stroke();
-
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener('resize', handleResize);
-    if (!isMobile) window.addEventListener('mousemove', handleMouseMove);
-    handleResize();
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [isMobile]);
-
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
+      {/* Very subtle noise texture */}
+      <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+    </div>
+  );
 };
 
 function App() {
@@ -246,9 +146,9 @@ function App() {
   }, [mouseX, mouseY]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#f0f0f0] selection:bg-white selection:text-black overflow-hidden flex items-center justify-center relative">
+    <div className="min-h-screen bg-[#000000] text-[#f0f0f0] selection:bg-white selection:text-black overflow-hidden flex items-center justify-center relative">
       {/* Optimized Background */}
-      <OptimizedBackground isMobile={isMobile} />
+      <ProfessionalBackground />
       
       {/* Dynamic Mouse Gradient (Desktop only) */}
       <motion.div 
@@ -302,12 +202,9 @@ function App() {
           </motion.div>
         </motion.div>
 
-        {/* Minimal Divider (Desktop only) */}
-        <div className="hidden lg:block w-px h-100 bg-white/5 self-center"></div>
-
-        {/* Right Side: Booking */}
-        <motion.div
-          initial={{ opacity: 1, x: 0, y: 20 }}
+          {/* Right Side: Booking */}
+          <motion.div
+          initial={{ opacity: 0, x: 0, y: 20 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           className="relative pt-4 md:pt-8 flex flex-col items-center"
@@ -316,11 +213,11 @@ function App() {
           <div className="absolute top-0 left-1/4 w-1.5 md:w-2 h-4 md:h-6 bg-white/10 rounded-full z-20"></div>
           <div className="absolute top-0 right-1/4 w-1.5 md:w-2 h-4 md:h-6 bg-white/10 rounded-full z-20"></div>
 
-          <div className="relative w-full max-w-[340px] md:max-w-none bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[3rem] overflow-hidden p-10 md:p-16 flex flex-col items-center group shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+          <div className="relative w-full max-w-[340px] md:max-w-none bg-[#0a0a0a] border border-white/10 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[3rem] overflow-hidden p-10 md:p-16 flex flex-col items-center group shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none" />
             
-            <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-tight text-center whitespace-nowrap relative z-10">
-              Work <span className="text-white/10">Together.</span>
+            <h2 className="text-2xl md:text-5xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-tight text-center whitespace-nowrap relative z-10 text-white/60">
+              Work Together.
             </h2>
             
             <p className="text-white/30 text-[10px] md:text-xs font-medium mb-8 md:mb-12 max-w-[220px] md:max-w-xs leading-relaxed uppercase tracking-[0.15em] text-center relative z-10">
@@ -404,7 +301,7 @@ function App() {
                 <iframe
                   src={bookingLink}
                   onLoad={handleIframeLoad}
-                  className={`w-full border-none hide-scrollbar absolute left-0 transition-all duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
+                  className={`w-full border-none hide-scrollbar absolute left-0 transition-opacity duration-1000 ${showIframe ? 'opacity-100' : 'opacity-0'} grayscale-[0.1] invert-[0.02]`}
                   style={{ 
                     background: '#050505',
                     height: cropConfig.height,
