@@ -89,15 +89,15 @@ const InteractiveBackground = ({ isMobile }) => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.fill();
       }
     }
 
     const init = () => {
       particles = [];
-      // Match desktop density to the subtle mobile look you preferred
-      const baseArea = isMobile ? 15000 : 18000;
+      // Boost density for better visibility on both platforms
+      const baseArea = isMobile ? 10000 : 12000;
       const count = Math.floor((canvas.width * canvas.height) / baseArea);
       for (let i = 0; i < count; i++) particles.push(new Particle());
     };
@@ -105,7 +105,7 @@ const InteractiveBackground = ({ isMobile }) => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      const connectDist = isMobile ? 120 : 120; // Shortened desktop lines
+      const connectDist = isMobile ? 140 : 160; 
       
       particles.forEach((p, i) => {
         p.update();
@@ -119,9 +119,9 @@ const InteractiveBackground = ({ isMobile }) => {
 
           if (dist < connectDist) {
             ctx.beginPath();
-            // Lower opacity for desktop to match phone subtleness
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / connectDist)})`;
-            ctx.lineWidth = 0.5;
+            // Higher contrast lines
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.25 * (1 - dist / connectDist)})`;
+            ctx.lineWidth = 0.8;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
